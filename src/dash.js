@@ -19,7 +19,10 @@ export function loadDashboard(project) {
     content.appendChild(newProjectBtn);
     
     // Render any existing projects from localStorage
+    projectManager.loadProjects(); // Load projects from localStorage
+
     const existingProjects = projectManager.getProjects();
+
     existingProjects.forEach((existingProject) => {
         const projectContainer = createProjectContainer(existingProject);
         content.appendChild(projectContainer);
@@ -81,7 +84,18 @@ export function createProjectContainer(project) {
     const projectName = document.createElement('h3');
     projectName.innerHTML = project.name;
 
+    // Add delete button to each project card
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerHTML = 'Delete Project';
+    deleteBtn.addEventListener('click', () => {
+        // Directly call deleteProject from projectManager
+        projectManager.deleteProject(project);
+        // Reload the dashboard after deletion
+        loadDashboard();
+    });
+
     projectContainer.appendChild(projectName);
+    projectContainer.appendChild(deleteBtn);
 
     if (project.todos && Array.isArray(project.todos)) {
         project.todos.forEach((todo) => {

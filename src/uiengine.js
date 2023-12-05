@@ -9,7 +9,7 @@ export function loadApp() {
     console.log('loadApp functioning...')
 
     const content = document.getElementById('content');
-    content.innerHTML = ''; // Clear existing content
+    content.innerHTML = 'Loading...'; // Clear existing content
 
     // Call loadDashboard to render the dashboard
     loadDashboard(content);

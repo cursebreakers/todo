@@ -27,17 +27,30 @@ export const projectManager = (function () {
         // Load projects from localStorage
         const savedProjects = JSON.parse(localStorage.getItem('projects'));
         if (savedProjects) {
-          savedProjects.forEach((project) => {
-            projects.push(Object.assign(new Project(), project));
+            // Clear existing projects before loading from localStorage
+            projects.length = 0;
+            
+            savedProjects.forEach((project) => {
+                projects.push(Object.assign(new Project(), project));
           });
         }
       }
-          
-      return {
+
+      function deleteProject(projectToDelete) {
+        const index = projects.findIndex((project) => project === projectToDelete);
+
+        if (index !== -1) {
+            projects.splice(index, 1);
+            saveProjects();
+        }
+    }
+
+    return {
         createProject,
-        createTodo, // Make sure this line is present
+        createTodo,
         saveProjects,
         loadProjects,
         getProjects: () => projects,
-      };
-    })();
+        deleteProject,
+    };
+})();
