@@ -1,7 +1,8 @@
-// Home.js file
+// Home.js
+// Home page spitter
 
 export default function homePage() {
-    console.log('loading home.js...')
+    console.log('loading home...')
     const content = document.getElementById('content');
     const tagLine = document.createElement('h3');
     let detail = document.createElement('p');
@@ -15,5 +16,5 @@ export default function homePage() {
     content.appendChild(detail)
     content.appendChild(due)
 
-    console.log('home.js loaded')
+    console.log('home page loaded')
 }

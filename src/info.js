@@ -1,7 +1,8 @@
-// Info.js file
+// Info.js
+// Info page spitter
 
 export default function infoPage() {
-    console.log('loading info.js...')
+    console.log('loading info...')
     const content = document.getElementById('content');
     const tagLine = document.createElement('h3');
     let detail = document.createElement('p');
@@ -16,5 +17,5 @@ export default function infoPage() {
     content.appendChild(due)
 
     
-    console.log('info.js loaded')
+    console.log('info page loaded')
 }

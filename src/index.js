@@ -1,4 +1,5 @@
 // Index.js file
+
 import homePage from './home.js'
 import infoPage from './info.js'
 
