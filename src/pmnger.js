@@ -2,6 +2,7 @@
 // Project manager module
 
 import { Project } from './project.js';
+import { Todo } from './todo.js';
 
 export const projectManager = (function () {
     const projects = [];
@@ -12,12 +13,16 @@ export const projectManager = (function () {
       saveProjects();
       return project;
     }
-          
+
+    function createTodo(title, description, dueDate, priority, notes = '', checklist = []) {
+      return new Todo(title, description, dueDate, priority, notes, checklist);
+  }
+
     function saveProjects() {
       // Save projects to localStorage
       localStorage.setItem('projects', JSON.stringify(projects));
     }
-          
+
     function loadProjects() {
         // Load projects from localStorage
         const savedProjects = JSON.parse(localStorage.getItem('projects'));
@@ -30,6 +35,7 @@ export const projectManager = (function () {
           
       return {
         createProject,
+        createTodo, // Make sure this line is present
         saveProjects,
         loadProjects,
         getProjects: () => projects,
