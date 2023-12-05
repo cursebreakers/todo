@@ -1,6 +1,17 @@
 // Todo.js file
 
-export default function newTodo() {
-    console.log('todo functioning...')
+import { projectManager } from './pmnger.js';
+projectManager.loadProjects();
 
-}
+    export class Todo {
+        constructor(title, description, dueDate, priority, notes = '', checklist = []) {
+          this.title = title;
+          this.description = description;
+          this.dueDate = dueDate;
+          this.priority = priority;
+          this.notes = notes;
+          this.checklist = checklist;
+        }
+      }
+
+console.log('todo engine functioning...')
