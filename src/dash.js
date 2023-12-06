@@ -108,7 +108,50 @@ export function createProjectContainer(project) {
 
 export function renderTodoItem(todo) {
     const todoItem = document.createElement('div');
-    todoItem.innerHTML = `Todo: ${todo.title}, Description: ${todo.description}`;
-    // Add more code to display other todo details as needed
+
+    // Create a toggle button to show/hide details
+    const toggleButton = document.createElement('button');
+    toggleButton.innerHTML = 'More';
+    let showDetails = false;
+
+    // Function to toggle the visibility of todo details
+    const toggleDetails = () => {
+        showDetails = !showDetails;
+        updateDetailsVisibility();
+
+         // Update the toggle button text
+        toggleButton.innerHTML = showDetails ? 'Less' : 'More';
+    };
+
+    toggleButton.addEventListener('click', toggleDetails);
+
+    todoItem.appendChild(toggleButton);
+
+    // Container for todo details
+    const detailsContainer = document.createElement('div');
+    detailsContainer.classList.add('details-container');
+    updateDetailsVisibility(); // Set initial visibility
+
+    todoItem.appendChild(detailsContainer);
+
     return todoItem;
+
+    // Function to update the visibility of todo details
+    function updateDetailsVisibility() {
+        const descriptionLabel = 'Description:';
+        const priorityLabel = 'Priority:';
+        const notesLabel = 'Notes:';
+        const checklistLabel = 'Checklist:';
+        const dueDateLabel = 'Due Date:';
+
+        detailsContainer.innerHTML = `
+            <strong>Title:</strong> ${todo.title}<br>
+            <strong>${dueDateLabel}</strong> ${todo.dueDate}<br>
+            ${showDetails ? `<strong>${descriptionLabel}</strong> ${todo.description}<br>` : ''}
+            ${showDetails ? `<strong>${priorityLabel}</strong> ${todo.priority}<br>` : ''}
+            ${showDetails ? `<strong>${notesLabel}</strong> ${todo.notes}<br>` : ''}
+            ${showDetails ? `<strong>${checklistLabel}</strong> ${todo.checklist.join(', ')}<br>` : ''}
+        `;
+        
+    }
 }
