@@ -3,6 +3,12 @@
 
 import { projectManager } from './pmnger.js';
 
+function editProjectOrTodo(project) {
+    projectManager.editItem(project);
+
+    loadDashboard(); // Reload the dashboard after editing
+}
+
 export function loadDashboard(project) {
     console.log('loadDashboard functioning...');
 
@@ -26,6 +32,12 @@ export function loadDashboard(project) {
     existingProjects.forEach((existingProject) => {
         const projectContainer = createProjectContainer(existingProject);
         content.appendChild(projectContainer);
+    });
+  
+    const editBtn = document.createElement('button');
+    editBtn.innerHTML = 'Edit';
+    editBtn.addEventListener('click', () => {
+        editProjectOrTodo(project);
     });
 
     // Event listeners for Dash UI
@@ -73,6 +85,12 @@ export function loadDashboard(project) {
 export function createProjectContainer(project) {
     console.log('Debug: project object', project);
 
+    const editBtn = document.createElement('button');
+    editBtn.innerHTML = 'Edit';
+    editBtn.addEventListener('click', () => {
+        editProjectOrTodo(project);
+    });
+
     if (!project || !project.name || !project.todos) {
         console.error('Error: Invalid project object');
         return;
@@ -95,6 +113,7 @@ export function createProjectContainer(project) {
     });
 
     projectContainer.appendChild(projectName);
+    projectContainer.appendChild(editBtn);
     projectContainer.appendChild(deleteBtn);
 
     if (project.todos && Array.isArray(project.todos)) {
@@ -107,51 +126,58 @@ export function createProjectContainer(project) {
 }
 
 export function renderTodoItem(todo) {
-    const todoItem = document.createElement('div');
+    console.log('Rendering Todo');
+
+    let showDetails = false;
+
+    // Container for todo details
+    const detailsContainer = document.createElement('div');
+    detailsContainer.classList.add('details-container');
 
     // Create a toggle button to show/hide details
     const toggleButton = document.createElement('button');
     toggleButton.innerHTML = 'More';
-    let showDetails = false;
+
+    // Declare label variables outside the updateDetailsVisibility function
+    const descriptionLabel = 'Description:';
+    const priorityLabel = 'Priority:';
+    const notesLabel = 'Notes:';
+    const checklistLabel = 'Checklist:';
+    const dueDateLabel = 'Due Date:';
 
     // Function to toggle the visibility of todo details
     const toggleDetails = () => {
         showDetails = !showDetails;
         updateDetailsVisibility();
 
-         // Update the toggle button text
+        // Update the toggle button text
         toggleButton.innerHTML = showDetails ? 'Less' : 'More';
     };
 
     toggleButton.addEventListener('click', toggleDetails);
 
-    todoItem.appendChild(toggleButton);
+    const todoItem = document.createElement('div');
 
-    // Container for todo details
-    const detailsContainer = document.createElement('div');
-    detailsContainer.classList.add('details-container');
-    updateDetailsVisibility(); // Set initial visibility
+    // Initially set the Todo Title and Due Date outside the updateDetailsVisibility function
+    todoItem.innerHTML = `
+        <strong>Title:</strong> ${todo.title}<br>
+        <strong>Due Date:</strong> ${todo.dueDate}<br>
+    `;
 
     todoItem.appendChild(detailsContainer);
+    todoItem.appendChild(toggleButton);
 
-    return todoItem;
 
     // Function to update the visibility of todo details
     function updateDetailsVisibility() {
-        const descriptionLabel = 'Description:';
-        const priorityLabel = 'Priority:';
-        const notesLabel = 'Notes:';
-        const checklistLabel = 'Checklist:';
-        const dueDateLabel = 'Due Date:';
 
         detailsContainer.innerHTML = `
-            <strong>Title:</strong> ${todo.title}<br>
-            <strong>${dueDateLabel}</strong> ${todo.dueDate}<br>
             ${showDetails ? `<strong>${descriptionLabel}</strong> ${todo.description}<br>` : ''}
             ${showDetails ? `<strong>${priorityLabel}</strong> ${todo.priority}<br>` : ''}
             ${showDetails ? `<strong>${notesLabel}</strong> ${todo.notes}<br>` : ''}
             ${showDetails ? `<strong>${checklistLabel}</strong> ${todo.checklist.join(', ')}<br>` : ''}
         `;
-        
     }
+
+    return todoItem;
 }
