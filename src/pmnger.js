@@ -3,6 +3,7 @@
 
 import { Project } from './project.js';
 import { Todo } from './todo.js';
+import { editItem } from './dash.js'
 
 export const projectManager = (function () {
     const projects = [];
@@ -43,46 +44,6 @@ export const projectManager = (function () {
             projects.splice(index, 1);
             saveProjects();
         }
-    }
-
-      function editItem(item) {
-        console.log('Editing Project...')
-        
-        if (item instanceof Project) {
-          // Prompt for new values for a Project
-          const newName = prompt('Enter the updated name for the project:');
-          if (newName) {
-              item.name = newName;
-          }
-      } else if (item instanceof Todo) {
-          // Prompt for new values for a Todo
-          const newTitle = prompt('Enter the updated title for the todo:');
-          if (newTitle) {
-              item.title = newTitle;
-          }
-
-          const newDescription = prompt('Enter the updated description for the todo:');
-          if (newDescription) {
-              item.description = newDescription;
-          }
-
-          const newDueDate = prompt('Enter the updated due date for the todo:');
-          if (newDueDate) {
-              item.dueDate = newDueDate;
-          }
-
-          const newPriority = prompt('Enter the updated priority for the todo:');
-          if (newPriority) {
-              item.priority = newPriority;
-          }
-
-          const newNotes = prompt('Enter the updated notes for the todo:');
-          if (newNotes) {
-              item.notes = newNotes;
-          }
-      }
-
-        saveProjects(); // Save projects after editing
     }
 
     return {
