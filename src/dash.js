@@ -1,5 +1,5 @@
 // dash.js
-// Dashboard Controller Module
+// Dashboard/UI Controller Module
 
 import { projectManager } from './pmnger.js';
 
@@ -40,7 +40,6 @@ export function loadDashboard(project) {
         editProjectOrTodo(project);
     });
 
-    // Event listeners for Dash UI
     // Event listener for creating a new project
     newProjectBtn.addEventListener('click', () => {
         console.log('Creating new project...');

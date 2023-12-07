@@ -3,9 +3,9 @@
 
 import { projectManager } from './pmnger.js';
 import { toggleInfoOverlay } from './info.js';
-import { loadApp } from './uiengine.js';
+import { loadDashboard } from './dash.js';
 
-export default function homePage() {
+export function homePage() {
     console.log('loading home...')
 
     const content = document.getElementById('content');
@@ -27,4 +27,15 @@ export default function homePage() {
 
   console.log('home page loaded')
 }
+
+export function loadApp() {
+  console.log('loadApp functioning...')
+
+  const content = document.getElementById('content');
+  content.innerHTML = 'Loading...'; // Clear existing content
+
+  // Call loadDashboard to render the dashboard
+  loadDashboard(content);
+  console.log('loadApp functioned')
+}    
 

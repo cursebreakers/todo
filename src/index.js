@@ -1,6 +1,6 @@
 // Index.js file
 
-import homePage from './home.js'
+import { homePage } from './home.js'
 
 
 function pageEngine() {
