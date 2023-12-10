@@ -338,6 +338,7 @@ export function renderTodoItem(todo) {
     todoItem.innerHTML = `
         <strong>Title:</strong> ${todo.title}<br>
         <strong>Due Date:</strong> ${todo.dueDate}<br>
+        <strong>Priority:</strong> ${todo.priority}<br>
     `;
 
     todoItem.appendChild(detailsContainer);
@@ -350,7 +351,6 @@ export function renderTodoItem(todo) {
 
         detailsContainer.innerHTML = `
             ${showDetails ? `<strong>${descriptionLabel}</strong> ${todo.description}<br>` : ''}
-            ${showDetails ? `<strong>${priorityLabel}</strong> ${todo.priority}<br>` : ''}
             ${showDetails ? `<strong>${notesLabel}</strong> ${todo.notes}<br>` : ''}
             ${showDetails ? `<strong>${checklistLabel}</strong> ${todo.checklist.join(', ')}<br>` : ''}
         `;
