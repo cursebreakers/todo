@@ -5,8 +5,13 @@ import { projectManager } from './pmnger.js';
 import { Project } from './project.js';
 import { Todo } from './todo.js';
 
-export function editItem(item) {
+export function editItem(project) {
     console.log('Editing Item...');
+
+    if (!project) {
+        console.error('Error: No project provided for editing');
+        return;
+    }
 
     // Create a container for the editable fields
     const editContainer = document.createElement('div');
@@ -16,50 +21,101 @@ export function editItem(item) {
         const fieldContainer = document.createElement('div');
         const nameLabel = document.createElement('label');
         nameLabel.textContent = `${label}: `;
-        const inputField = document.createElement('input');
-        inputField.value = value;
+        
+        let inputField;
+    
+        if (typeof value === 'string' || value instanceof String) {
+            // If the value is a string, create a text input
+            inputField = document.createElement('input');
+            inputField.type = 'text';
+            inputField.value = value;
+        } else if (typeof value === 'number' && !isNaN(value)) {
+            // If the value is a number, create a number input
+            inputField = document.createElement('input');
+            inputField.type = 'number';
+            inputField.value = value;
+        } else {
+            // If the value has another type, create a generic input
+            inputField = document.createElement('input');
+            inputField.type = 'text';
+            inputField.value = value;
+        }
+    
         const saveButton = document.createElement('button');
         saveButton.textContent = 'Save';
         saveButton.addEventListener('click', () => {
             callback(inputField.value);
         });
+    
         fieldContainer.appendChild(nameLabel);
         fieldContainer.appendChild(inputField);
         fieldContainer.appendChild(saveButton);
+        console.log('generating field item...');
+    
         return fieldContainer;
     }
 
-    if (item instanceof Project) {
-        // Render editable fields for Project
-        editContainer.appendChild(createEditableField('Name', item.name, (value) => {
-            item.name = value;
-            projectManager.saveProjects();
-            loadDashboard();
-        }));
-    } else if (item instanceof Todo) {
-        // Render editable fields for Todo
-        editContainer.appendChild(createEditableField('Title', item.title, (value) => {
-            item.title = value;
-            projectManager.saveProjects();
-            loadDashboard();
-        }));
-        editContainer.appendChild(createEditableField('Description', item.description, (value) => {
-            item.description = value;
-            projectManager.saveProjects();
-            loadDashboard();
-        }));
-        editContainer.appendChild(createEditableField('Due Date', item.dueDate, (value) => {
-            item.dueDate = value;
-            projectManager.saveProjects();
-            loadDashboard();
-        }));
-        // Add similar editable fields for other Todo properties
+        if (project instanceof Project) {
+            console.log('Project detected...');
+
+            // Render editable fields for Project
+            editContainer.appendChild(createEditableField('Name', project.name, (value) => {
+                project.name = value;
+                project.todos.forEach((todo) => {
+                    // Update Todo details when the project name is edited
+                    todo.projectName = value;
+                });
+                projectManager.saveProjects();
+                loadDashboard();
+            }));
+        
+            // Iterate through Todo items in the project
+            project.todos.forEach((todo) => {
+                editContainer.appendChild(createEditableField('Title', todo.title, (value) => {
+                    todo.title = value;
+                    projectManager.saveProjects();
+                    loadDashboard();
+                }));
+
+                editContainer.appendChild(createEditableField('Description', todo.description, (value) => {
+                todo.description = value;
+                projectManager.saveProjects();
+                loadDashboard();
+            }));
+
+            editContainer.appendChild(createEditableField('Due Date', todo.dueDate, (value) => {
+                todo.dueDate = value;
+                projectManager.saveProjects();
+                loadDashboard();
+            }));
+
+            editContainer.appendChild(createEditableField('Priority', todo.priority, (value) => {
+                todo.priority = value;
+                projectManager.saveProjects();
+                loadDashboard();
+            }));
+
+            editContainer.appendChild(createEditableField('Notes', todo.notes, (value) => {
+                todo.notes = value;
+                projectManager.saveProjects();
+                loadDashboard();
+            }));
+
+            editContainer.appendChild(createEditableField('Checklist', todo.checklist.join(', '), (value) => {
+                todo.checklist = value.split(',').map(item => item.trim());
+                projectManager.saveProjects();
+                loadDashboard();
+            }));
+            
+        });
+        
     }
 
     // Append the editContainer to the project container
     const projectContainer = document.getElementById('content');
     projectContainer.innerHTML = ''; // Clear existing content
     projectContainer.appendChild(editContainer);
+    console.log('edit mode active...');
 }
 
 export function loadDashboard(project) {
@@ -84,15 +140,17 @@ export function loadDashboard(project) {
 
     existingProjects.forEach((existingProject) => {
         const projectContainer = createProjectContainer(existingProject);
+
+        const editBtn = document.createElement('button');
+        editBtn.innerHTML = 'Edit';
+        editBtn.addEventListener('click', () => {
+            editItem(existingProject);
+        });
+
         content.appendChild(projectContainer);
+        projectContainer.appendChild(editBtn);
     });
   
-    const editBtn = document.createElement('button');
-    editBtn.innerHTML = 'Edit';
-    editBtn.addEventListener('click', () => {
-        editProjectOrTodo(project);
-    });
-
     // Event listener for creating a new project
     newProjectBtn.addEventListener('click', () => {
         console.log('Creating new project...');
@@ -137,12 +195,6 @@ export function loadDashboard(project) {
 export function createProjectContainer(project) {
     console.log('Debug: project object', project);
 
-    const editBtn = document.createElement('button');
-    editBtn.innerHTML = 'Edit';
-    editBtn.addEventListener('click', () => {
-        editItem(project);
-    });
-
     if (!project || !project.name || !project.todos) {
         console.error('Error: Invalid project object');
         return;
@@ -165,7 +217,6 @@ export function createProjectContainer(project) {
     });
 
     projectContainer.appendChild(projectName);
-    projectContainer.appendChild(editBtn);
     projectContainer.appendChild(deleteBtn);
 
     if (project.todos && Array.isArray(project.todos)) {
@@ -222,6 +273,7 @@ export function renderTodoItem(todo) {
 
     // Function to update the visibility of todo details
     function updateDetailsVisibility() {
+        console.log('showing/hiding details');
 
         detailsContainer.innerHTML = `
             ${showDetails ? `<strong>${descriptionLabel}</strong> ${todo.description}<br>` : ''}
