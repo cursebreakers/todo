@@ -55,29 +55,30 @@ export function editItem(project) {
         return fieldContainer;
     }
 
-        if (project instanceof Project) {
-            console.log('Project detected...');
+    if (project instanceof Project) {
+        console.log('Project detected...');
 
-            // Render editable fields for Project
-            editContainer.appendChild(createEditableField('Name', project.name, (value) => {
-                project.name = value;
-                project.todos.forEach((todo) => {
-                    // Update Todo details when the project name is edited
-                    todo.projectName = value;
-                });
+        // Render editable fields for Project
+        editContainer.appendChild(createEditableField('Name', project.name, (value) => {
+            project.name = value;
+            project.todos.forEach((todo) => {
+                // Update Todo details when the project name is edited
+                todo.projectName = value;
+            });
+            projectManager.saveProjects();
+            loadDashboard();
+        }));
+    
+        // Iterate through Todo items in the project
+        project.todos.forEach((todo) => {
+            editContainer.appendChild(createEditableField('Title', todo.title, (value) => {
+                todo.title = value;
                 projectManager.saveProjects();
                 loadDashboard();
             }));
-        
-            // Iterate through Todo items in the project
-            project.todos.forEach((todo) => {
-                editContainer.appendChild(createEditableField('Title', todo.title, (value) => {
-                    todo.title = value;
-                    projectManager.saveProjects();
-                    loadDashboard();
-                }));
 
-                editContainer.appendChild(createEditableField('Description', todo.description, (value) => {
+           // Add other Todo fields as needed
+            editContainer.appendChild(createEditableField('Description', todo.description, (value) => {
                 todo.description = value;
                 projectManager.saveProjects();
                 loadDashboard();
@@ -101,14 +102,14 @@ export function editItem(project) {
                 loadDashboard();
             }));
 
+            // Assuming checklist is an array, you can create a text input for it
             editContainer.appendChild(createEditableField('Checklist', todo.checklist.join(', '), (value) => {
+                // Convert the comma-separated string back to an array
                 todo.checklist = value.split(',').map(item => item.trim());
                 projectManager.saveProjects();
                 loadDashboard();
             }));
-            
         });
-        
     }
 
     // Append the editContainer to the project container
@@ -208,7 +209,7 @@ export function createProjectContainer(project) {
 
     // Add delete button to each project card
     const deleteBtn = document.createElement('button');
-    deleteBtn.innerHTML = 'Delete Project';
+    deleteBtn.innerHTML = 'Remove';
     deleteBtn.addEventListener('click', () => {
         // Directly call deleteProject from projectManager
         projectManager.deleteProject(project);
