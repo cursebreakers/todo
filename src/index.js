@@ -1,6 +1,7 @@
 // Index.js file
 
 import { homePage } from './home.js'
+import './styles.css';
 
 
 function pageEngine() {
@@ -12,4 +13,3 @@ function pageEngine() {
 }
 
 pageEngine()
-alert('Hello!')

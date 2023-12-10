@@ -1,0 +1,30 @@
+* {
+    font-family: 'mont', 'montlite', 'monospace';
+    background-color: #000;
+    color: antiquewhite;
+}
+
+@font-face {
+    font-family: 'mont';
+    src: url(./fnt/Montserrat-Regular.otf);
+}
+
+@font-face {
+    font-family: 'montlite';
+    src: url(./fnt/Montserrat-Light.otf);
+}
+
+
+#content {
+    background-color: #000;
+    color: aqua;
+}
+
+.project-container {
+    background-color: #111;
+}
+
+.details-container {
+    background-color: #111;
+    padding: 2px;
+}

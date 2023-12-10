@@ -85,9 +85,11 @@ export function editItem(project) {
             }));
 
             editContainer.appendChild(createEditableField('Due Date', todo.dueDate, (value) => {
-                todo.dueDate = value;
+                const dueDateInput = document.createElement('input');
+                dueDateInput.type = 'date';
+                dueDateInput.value = value;
                 projectManager.saveProjects();
-                loadDashboard();
+                    loadDashboard();
             }));
 
             editContainer.appendChild(createEditableField('Priority', todo.priority, (value) => {
@@ -143,7 +145,7 @@ export function loadDashboard(project) {
         const projectContainer = createProjectContainer(existingProject);
 
         const editBtn = document.createElement('button');
-        editBtn.innerHTML = 'Edit';
+        editBtn.innerHTML = 'Update';
         editBtn.addEventListener('click', () => {
             editItem(existingProject);
         });
@@ -156,21 +158,44 @@ export function loadDashboard(project) {
     newProjectBtn.addEventListener('click', () => {
         console.log('Creating new project...');
 
-        // Collect details for the new project
-        const projectName = prompt('Enter the name for the new project...');
-        if (projectName) {
-            console.log('project naming...');
+        const newProjectForm = document.createElement('div');
+        newProjectForm.classList.add('new-project-form');
 
-            // Collect details for the new todo
-            console.log('todo collecting...');
-            const todoTitle = prompt('Enter the title for the new todo:');
-            const todoDescription = prompt('Enter the description for the new todo:');
-            const todoDueDate = prompt('Enter the due date for the new todo:');
-            const todoPriority = prompt('Enter the priority for the new todo:');
-            const todoNotes = prompt('Enter any notes for the new todo:');
+        // Function to create an input field within the form
+        function createInputField(label, type) {
+            const inputContainer = document.createElement('div');
+            const nameLabel = document.createElement('label');
+            nameLabel.textContent = `${label}: `;
+            const inputField = document.createElement('input');
+            inputField.type = type;
+            inputContainer.appendChild(nameLabel);
+            inputContainer.appendChild(inputField);
+            return inputContainer;
+        }
+
+
+        // Create input fields for the new project form
+        const projectNameField = createInputField('Project Name', 'text');
+        const todoTitleField = createInputField('Todo Title', 'text');
+        const todoDescriptionField = createInputField('Todo Description', 'text');
+        const todoDueDateField = createInputField('Todo Due Date', 'date'); // You might want to use 'date' type for date input
+        const todoPriorityField = createInputField('Todo Priority', 'text');
+        const todoNotesField = createInputField('Todo Notes', 'text');
+
+        // Create a button to submit the new project form
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Create Project';
+
+        submitButton.addEventListener('click', () => {
+            // Get values from the form fields
+            const projectName = projectNameField.querySelector('input').value;
+            const todoTitle = todoTitleField.querySelector('input').value;
+            const todoDescription = todoDescriptionField.querySelector('input').value;
+            const todoDueDate = todoDueDateField.querySelector('input').value;
+            const todoPriority = todoPriorityField.querySelector('input').value;
+            const todoNotes = todoNotesField.querySelector('input').value;
 
             // Add the new todo to the project
-            console.log('updating project details...');
             const newTodo = projectManager.createTodo(
                 todoTitle,
                 todoDescription,
@@ -179,14 +204,28 @@ export function loadDashboard(project) {
                 todoNotes
             );
 
-            console.log('project created, reloading dashboard...');
-
             // Creates new project with the collected details
             const newProject = projectManager.createProject(projectName);
             newProject.todos.push(newTodo);
             projectManager.saveProjects(); // Save projects after creating a new project
             loadDashboard();
-        }
+
+            // Remove the form from the container
+            newProjectForm.innerHTML = '';
+        });
+
+        // Append input fields and submit button to the form container
+        newProjectForm.appendChild(projectNameField);
+        newProjectForm.appendChild(todoTitleField);
+        newProjectForm.appendChild(todoDescriptionField);
+        newProjectForm.appendChild(todoDueDateField);
+        newProjectForm.appendChild(todoPriorityField);
+        newProjectForm.appendChild(todoNotesField);
+        newProjectForm.appendChild(submitButton);
+
+        // Append the form container to the content
+        const content = document.getElementById('content');
+        content.insertBefore(newProjectForm, newProjectBtn.nextSibling);
     });
 
     console.log('loadDashboard functioned');
