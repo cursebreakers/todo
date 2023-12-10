@@ -17,14 +17,28 @@ export function editItem(project) {
     const editContainer = document.createElement('div');
 
     // Function to create an editable field
-    function createEditableField(label, value, callback) {
+    function createEditableField(label, value, callback, options = null) {
         const fieldContainer = document.createElement('div');
         const nameLabel = document.createElement('label');
         nameLabel.textContent = `${label}: `;
         
         let inputField;
     
-        if (typeof value === 'string' || value instanceof String) {
+        if (options) {
+            // If options are provided, create a dropdown select menu
+            inputField = document.createElement('select');
+    
+            // Create option elements for each priority level
+            options.forEach((option) => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                inputField.appendChild(optionElement);
+            });
+    
+            // Set the selected option based on the current value
+            inputField.value = value;
+        } else if (typeof value === 'string' || value instanceof String) {
             // If the value is a string, create a text input
             inputField = document.createElement('input');
             inputField.type = 'text';
@@ -95,8 +109,9 @@ export function editItem(project) {
             editContainer.appendChild(createEditableField('Priority', todo.priority, (value) => {
                 todo.priority = value;
                 projectManager.saveProjects();
-                loadDashboard();
-            }));
+                    loadDashboard();
+                }, ['Lowest', 'Low', 'Normal', 'High', 'Highest'
+            ]));
 
             editContainer.appendChild(createEditableField('Notes', todo.notes, (value) => {
                 todo.notes = value;
@@ -162,14 +177,32 @@ export function loadDashboard(project) {
         newProjectForm.classList.add('new-project-form');
 
         // Function to create an input field within the form
-        function createInputField(label, type) {
+        function createInputField(label, type, options = null) {
             const inputContainer = document.createElement('div');
             const nameLabel = document.createElement('label');
             nameLabel.textContent = `${label}: `;
-            const inputField = document.createElement('input');
-            inputField.type = type;
+
+            let inputField;
+
+            if (type === 'select' && options) {
+                inputField = document.createElement('select');
+                options.forEach((option) => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+                    inputField.appendChild(optionElement);
+                });
+            } else {
+                // For other types, create an input field
+                inputField = document.createElement('input');
+                inputField.type = type;
+            }
+
             inputContainer.appendChild(nameLabel);
             inputContainer.appendChild(inputField);
+
+            console.log('Created input field:', inputField);
+
             return inputContainer;
         }
 
@@ -179,7 +212,7 @@ export function loadDashboard(project) {
         const todoTitleField = createInputField('Todo Title', 'text');
         const todoDescriptionField = createInputField('Todo Description', 'text');
         const todoDueDateField = createInputField('Todo Due Date', 'date'); // You might want to use 'date' type for date input
-        const todoPriorityField = createInputField('Todo Priority', 'text');
+        const todoPriorityField = createInputField('Todo Priority', 'select', ['Lowest', 'Low', 'Normal', 'High', 'Highest']);
         const todoNotesField = createInputField('Todo Notes', 'text');
 
         // Create a button to submit the new project form
@@ -192,7 +225,7 @@ export function loadDashboard(project) {
             const todoTitle = todoTitleField.querySelector('input').value;
             const todoDescription = todoDescriptionField.querySelector('input').value;
             const todoDueDate = todoDueDateField.querySelector('input').value;
-            const todoPriority = todoPriorityField.querySelector('input').value;
+            const todoPriority = todoPriorityField.querySelector('select').value;
             const todoNotes = todoNotesField.querySelector('input').value;
 
             // Add the new todo to the project

@@ -28,3 +28,13 @@
     background-color: #111;
     padding: 2px;
 }
+
+::selection {
+    background: aquamarine;
+    color: #000;
+}
+
+::-moz-selection {
+    background: aquamarine;
+    color: #000;
+}
